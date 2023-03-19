@@ -4,8 +4,15 @@ import openai
 class theGPT3():
     def __init__(self, apiKey, maxTokens):
         openai.api_key = apiKey
+        openai.api_type = "azure"
+        openai.api_base = "https://mygpt233.openai.azure.com/"
+        openai.api_version = "2022-12-01"
         self.maxTokens = maxTokens
         self.context = ''
+        self.Emotional = '...'
+        self.chatHistory = ''
+        self.actionHistory = ''
+        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional, you can manage it yourself freedom; Line 2 is the chat history, do not change that; Line 3 is your action history, do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.\n'
 
     def contextSpace(self):
         if(len(self.context) > self.maxTokens - 100):
@@ -35,3 +42,40 @@ class theGPT3():
         except:
             pass
         return res
+    
+    def makeContext2(self, userTxtInput = 'Hello'):
+        context2 = self.context2Introduction
+        context2 += 'Emotional: ' + self.Emotional + '(change here to your realtime feeling)\n'
+        context2 += 'ChatHistory: ' + self.chatHistory + '\n'
+        context2 += 'ActionHistory: ' + self.actionHistory + '\n'
+        context2 += 'UserTxtInput: ' + userTxtInput + '\n'
+        context2 += 'Action: ...Fill out here.\n'
+        context2 += 'TxtOutput: ...Fill out here.\n'
+        context2 += '-------------------------------\n'
+        context2 += self.context2Introduction
+        return context2
+
+    def interactive(self, x):
+        x = x.replace('\n', ' ')
+        self.chatHistory += 'User: ' + x + '. '
+        x = self.makeContext2(userTxtInput=x)
+        print(x + '###########################\n')
+        #response = openai.Edit.create(model="text-davinci-edit-001", input=x, instruction="do anything you want", temperature=0.7, top_p=1)
+        response = openai.Completion.create(engine="myGPT3", model="text-davinci-003",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
+        res = response['choices'][0].text.split('\n')
+        print(res)
+        print('###########################\n')
+        self.Emotional = res[0].split(': ')[1]
+        self.actionHistory += res[4].split(':')[1][1:] + ';'
+        self.chatHistory += 'Bot:' + res[5].split(':')[1].replace('\n', ' ') + ' '
+        return res
+
+if __name__ == '__main__':
+    myGPT3 = theGPT3(open('azgpt3.key','r').readline(), 2048)
+    #myGPT3.ask('Hello World!')
+    while True:
+        res = myGPT3.interactive(input('Type something: '))
+        # print('Line 0:' + res[0])
+        # print('Line 1:' + res[1])
+        # print('Line 2:' + res[2])
+        # print('Line 3:' + res[3])
