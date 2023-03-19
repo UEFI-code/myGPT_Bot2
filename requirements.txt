@@ -1,0 +1,4 @@
+openai
+torchvison==0.14.1
+torch
+opencv-python
