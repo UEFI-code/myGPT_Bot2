@@ -59,12 +59,12 @@ class theGPT3():
         x = x.replace('\n', ' ')
         self.chatHistory += 'User: ' + x + '. '
         x = self.makeContext2(userTxtInput=x)
-        print(x + '###########################\n')
+        #print(x + '###########################\n')
         #response = openai.Edit.create(model="text-davinci-edit-001", input=x, instruction="do anything you want", temperature=0.7, top_p=1)
         response = openai.Completion.create(engine="myGPT3", model="text-davinci-003",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
         res = response['choices'][0].text.split('\n')
-        print(res)
-        print('###########################\n')
+        #print(res)
+        #print('###########################\n')
         self.Emotional = res[0].split(': ')[1]
         self.actionHistory += res[4].split(':')[1][1:] + ';'
         self.chatHistory += 'Bot:' + res[5].split(':')[1].replace('\n', ' ') + ' '
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     #myGPT3.ask('Hello World!')
     while True:
         res = myGPT3.interactive(input('Type something: '))
+        print(res)
         # print('Line 0:' + res[0])
         # print('Line 1:' + res[1])
         # print('Line 2:' + res[2])
