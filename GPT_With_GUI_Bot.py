@@ -1,6 +1,14 @@
 import GPT3_Core
 import os
 import cv2
+import azure.cognitiveservices.speech as speechsdk
+
+speech_config = speechsdk.SpeechConfig(subscription=open('azspeech.key','r').readline(), region='japaneast')
+# Note: the voice setting will not overwrite the voice element in input SSML.
+speech_config.speech_synthesis_voice_name = "zh-CN-XiaohanNeural"
+# use the default speaker as audio output.
+speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
+
 myGPT3 = GPT3_Core.theGPT3(open('azgpt3.key','r').readline(), 2048)
 #myGPT3.ask('Hello World!')
 
@@ -37,3 +45,11 @@ while True:
     #print('Founding Figure: ' + FigFile)
     show_simliar_figure(DesiredFigFile, TxtOutput)
     print('TxtOutput: ' + TxtOutput)
+    result = speech_synthesizer.speak_text_async(TxtOutput).get()
+    if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+        print("Speech synthesized")
+    elif result.reason == speechsdk.ResultReason.Canceled:
+        cancellation_details = result.cancellation_details
+        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+        if cancellation_details.reason == speechsdk.CancellationReason.Error:
+            print("Error details: {}".format(cancellation_details.error_details))
