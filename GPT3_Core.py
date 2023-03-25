@@ -12,7 +12,7 @@ class theGPT3():
         self.Emotional = '...'
         self.chatHistory = ''
         self.actionHistory = ''
-        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional, you can manage it yourself freedom; Line 2 is the chat history, do not change that; Line 3 is your action history, do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.\n'
+        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional, you can manage it yourself freedom; Line 2 is the chat history, do not change that; Line 3 is your action history (<br> means line break here but you can use normal \\n in your response), do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.\n'
 
     def contextSpace(self):
         if(len(self.context) > self.maxTokens - 100):
@@ -67,7 +67,11 @@ class theGPT3():
         #print('###########################\n')
         self.Emotional = res[0].split(': ')[1]
         self.actionHistory += res[4].split(':')[1][1:] + ';'
-        self.chatHistory += 'Bot:' + res[5].split(':')[1].replace('\n', ' ') + ' '
+        self.chatHistory += 'Bot: ' + res[5].split(': ')[1]
+        if (len(res) > 6):
+            for i in range(6, len(res)):
+                self.chatHistory += '<br>' + res[i]
+        self.chatHistory += ' '
         return res
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ import azure.cognitiveservices.speech as speechsdk
 
 speech_config = speechsdk.SpeechConfig(subscription=open('azspeech.key','r').readline(), region='japaneast')
 # Note: the voice setting will not overwrite the voice element in input SSML.
-speech_config.speech_synthesis_voice_name = "zh-CN-XiaohanNeural"
+speech_config.speech_synthesis_voice_name = "zh-CN-XiaoshuangNeural"
 # use the default speaker as audio output.
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
@@ -39,6 +39,9 @@ while True:
     Emotional = res[0].split(': ')[1]
     Action = res[4].split(': ')[1]
     TxtOutput = res[5].split(': ')[1]
+    if(len(res) > 6):
+        for i in range(6, len(res)):
+            TxtOutput += '\n' + res[i]
     DesiredFigFile = Emotional.split(' ')[0] + '_' + Action.split(' ')[0] + '.png'
     print('Emotional: ' + Emotional)
     print('Action: ' + Action)
