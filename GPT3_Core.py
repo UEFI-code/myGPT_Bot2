@@ -1,18 +1,20 @@
 import os
-import openai
+#import openai
+from myGPT_Drv import GPT3_Drv
 
 class theGPT3():
     def __init__(self, apiKey, maxTokens):
-        openai.api_key = apiKey
-        openai.api_type = "azure"
-        openai.api_base = "https://mygpt233.openai.azure.com/"
-        openai.api_version = "2022-12-01"
+        # openai.api_key = apiKey
+        # openai.api_type = "azure"
+        # openai.api_base = "https://mygpt233.openai.azure.com/"
+        # openai.api_version = "2022-12-01"
+        self.gptdrv = GPT3_Drv(maxTokens=maxTokens, apiKey=apiKey)
         self.maxTokens = maxTokens
         self.context = ''
         self.Emotional = '...'
         self.chatHistory = ''
         self.actionHistory = ''
-        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional, you can manage it yourself freedom; Line 2 is the chat history, do not change that; Line 3 is your action history (<br> means line break here but you can use normal \\n in your response), do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.\n'
+        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional, you can manage it yourself freedom; Line 2 is the chat history, do not change that; Line 3 is your action history (<br> means line break here but you can use normal \\n in your response), do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.'
 
     def contextSpace(self):
         if(len(self.context) > self.maxTokens - 100):
@@ -27,8 +29,9 @@ class theGPT3():
                 x += '\n\n'
         self.context += x
         self.contextSpace()
-        response = openai.Completion.create(model="text-davinci-003",prompt=self.context,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
-        res = response['choices'][0].text
+        # response = openai.Completion.create(model="text-davinci-003",prompt=self.context,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
+        # res = response['choices'][0].text
+        res = self.gptdrv.forward(self.context)
         try:
             while res[0] == '\n':
                 res = res[1:]
@@ -44,7 +47,7 @@ class theGPT3():
         return res
     
     def makeContext2(self, userTxtInput = 'Hello'):
-        context2 = self.context2Introduction
+        context2 = self.context2Introduction + '\n'
         context2 += 'Emotional: ' + self.Emotional + '(change here to your realtime feeling)\n'
         context2 += 'ChatHistory: ' + self.chatHistory + '\n'
         context2 += 'ActionHistory: ' + self.actionHistory + '\n'
@@ -52,7 +55,7 @@ class theGPT3():
         context2 += 'Action: ...Fill out here.\n'
         context2 += 'TxtOutput: ...Fill out here.\n'
         context2 += '-------------------------------\n'
-        context2 += self.context2Introduction
+        context2 += self.context2Introduction + '\n'
         return context2
 
     def interactive(self, x):
@@ -60,9 +63,11 @@ class theGPT3():
         self.chatHistory += 'User: ' + x + '. '
         x = self.makeContext2(userTxtInput=x)
         #print(x + '###########################\n')
-        #response = openai.Edit.create(model="text-davinci-edit-001", input=x, instruction="do anything you want", temperature=0.7, top_p=1)
-        response = openai.Completion.create(engine="myGPT3", model="text-davinci-003",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
-        res = response['choices'][0].text.split('\n')
+        #response = openai.Completion.create(engine="myGPT3_5",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
+        # response = openai.Completion.create(engine="myGPT3",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
+        #response = openai.Completion.create(engine="myGPT3_Curie",prompt=x,temperature=0.7,max_tokens=self.maxTokens,top_p=1,frequency_penalty=0,presence_penalty=0)
+        #res = response['choices'][0].text.split('\n')
+        res = self.gptdrv.forward(x).split('\n')
         #print(res)
         #print('###########################\n')
         self.Emotional = res[0].split(': ')[1]
