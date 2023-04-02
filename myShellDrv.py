@@ -2,7 +2,6 @@ import os
 import pty
 import select
 import fcntl
-import subprocess
 import re
 
 class myShell():
