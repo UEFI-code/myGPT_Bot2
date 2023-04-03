@@ -1,7 +1,7 @@
 import os
 #import openai
 import myShellDrv
-from myGPT_Drv import GPT3_Drv
+from myGPT_Drv import GPT3_Drv, chat_Drv
 import time
 class theGPT3():
     def __init__(self, apiKey, maxTokens):
@@ -13,13 +13,14 @@ class theGPT3():
         self.MaxMemForTTY = 512
         self.maxTry = 3
         self.gptdrv = GPT3_Drv(maxTokens=maxTokens, apiKey=apiKey)
+        #self.gptdrv = chat_Drv(maxTokens=maxTokens, apiKey=apiKey)
         self.shell = myShellDrv.myShell(maxChars=self.MaxMemForTTY)
         self.maxTokens = maxTokens
         self.Emotional = '...'
         self.chatHistory = ''
         self.actionHistory = ''
         self.cmdHistory = ''
-        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional; Line 2 is current terminal status; Line 3 is the chat history; Line 4 is your action history; Line 5 is your cmd typed history; Line 6 is users text input; Line 7 is your action; Line 8 is your cmd to the bash/cmd.exe; Line 9 and later is your text output. Please note that your cmd will be respond in the next talk so do not answer xxx at this time (Told user you are working on it), and do not use sudo, do not delete files, and you should respond a full complete context strictly with this format.'
+        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional; Line 2 is current terminal status; Line 3 is the chat history; Line 4 is your action history; Line 5 is your cmd typed history; Line 6 is users text input; Line 7 is your action; Line 8 is your cmd to the bash/cmd.exe; Line 9 and later is your text output. Please note that your cmd will be respond in the next talk so do not answer something random at this time (Told user you are working on it), and do not use sudo, do not delete files, and you should respond a full complete context strictly with this format.'
         self.MaxMemForCmdHistory = 256
         self.MaxMemForActionHistory = 4000 - maxTokens - len(self.context2Introduction) - self.MaxMemForChatHistory - self.MaxMemForTTY - self.MaxMemForCmdHistory - 128
 
