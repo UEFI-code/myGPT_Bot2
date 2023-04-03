@@ -37,10 +37,10 @@ while True:
     res = myGPT3.interactive(input('Type something: '))
     #print(res)
     Emotional = res[0].split(': ')[1]
-    Action = res[5].split(': ')[1]
-    TxtOutput = res[6].split(': ')[1]
-    if(len(res) > 7):
-        for i in range(7, len(res)):
+    Action = res[6].split(': ')[1]
+    TxtOutput = res[8].split(': ')[1]
+    if(len(res) > 9):
+        for i in range(9, len(res)):
             TxtOutput += '\n' + res[i]
     elif '<br>' in TxtOutput:
         TxtOutput = TxtOutput.replace('<br>', '\n')

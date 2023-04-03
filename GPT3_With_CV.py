@@ -1,4 +1,4 @@
-import GPT3_Core
+import GPT3_Core_old as GPT3_Core
 import torchvision
 import cv2
 import drawer

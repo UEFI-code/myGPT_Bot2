@@ -47,6 +47,6 @@ if __name__ == '__main__':
     myShellObj = myShell()
     myShellObj.getScreen()
     print(myShellObj.ptyData.decode('utf-8'))
-    myShellObj.sendCmd('ifconfig')
+    #myShellObj.sendCmd('ifconfig')
     myShellObj.getScreen()
     print(myShellObj.translateScreen())
