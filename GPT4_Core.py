@@ -84,10 +84,19 @@ class theGPT4():
 if __name__ == '__main__':
     myGPT4 = theGPT4(open('azgpt3.key','r').readline())
     #myGPT3.ask('Hello World!')
+    monitor_tty = input('Enter the Monitor TTY:')
+    if (monitor_tty.startswith('/dev/tty')):    
+        monitor_tty = open(monitor_tty, 'w')
     while True:
         res = myGPT4.interactive(input('Type something: '))
         #print(res)
-        print(myGPT4.shell.ptyData.decode('utf-8'))
+        if monitor_tty:
+            # Clear the screen
+            monitor_tty.write('\x1b[2J')
+            monitor_tty.write(myGPT4.shell.ptyData.decode('utf-8'))
+            monitor_tty.flush()
+        else:
+            print(myGPT4.shell.ptyData.decode('utf-8'))
         # print('Line 0:' + res[0])
         # print('Line 1:' + res[1])
         # print('Line 2:' + res[2])

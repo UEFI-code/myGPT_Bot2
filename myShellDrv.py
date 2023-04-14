@@ -26,7 +26,7 @@ class myShell():
             r, _, _ = select.select([self.fd], [], [], 1.0)
             if r:
                 try:
-                    self.ptyData += os.read(self.fd, 1024)
+                    self.ptyData += os.read(self.fd, 2048)
                 except:
                     continue
             else:
