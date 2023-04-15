@@ -31,7 +31,7 @@ class chat_Drv:
             "Content-Type": "application/json",
             "api-key": apiKey
         }
-        self.messages = [{"role":"system","content":"You are an AI assistant that helps people find information."}]
+        self.messages = [{"role":"system","content":"You are a smart robot girl."}]
         self.body = {
             "messages": None,
             "max_tokens": maxTokens,
@@ -54,7 +54,7 @@ class GPT4_Drv:
             "Content-Type": "application/json",
             "api-key": apiKey
         }
-        self.messages = [{"role":"system","content":"You are an AI assistant that helps people find information."}]
+        self.messages = [{"role":"system","content":"You are a smart robot girl."}]
         self.body = {
             "messages": None,
             "max_tokens": 2048,

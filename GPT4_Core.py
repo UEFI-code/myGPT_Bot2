@@ -87,6 +87,8 @@ if __name__ == '__main__':
     monitor_tty = input('Enter the Monitor TTY:')
     if (monitor_tty.startswith('/dev/tty')):    
         monitor_tty = open(monitor_tty, 'w')
+    else:
+        monitor_tty = None
     while True:
         res = myGPT4.interactive(input('Type something: '))
         #print(res)
