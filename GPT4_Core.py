@@ -7,13 +7,12 @@ class theGPT4():
     def __init__(self, apiKey, name='CuteGPT'):
         self.name = name
         self.gptdrv = GPT4_Drv(apiKey=apiKey)
-        self.shell = myShellDrv.myShell(maxChars=self.MaxMemForTTY)
+        self.shell = myShellDrv.myShell(maxChars=2048)
         self.EmotionHistory = ''
         self.chatHistory = ''
         self.actionHistory = ''
         self.cmdHistory = ''
         self.context2Introduction = 'This is a special context format. Follow this format strictly. Line 0 is this context struct introduction, do not change that; Line 1 is the chat history, do not change that; Line 2 is the emotion history, do not change that; Line 3 is the body action history, do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.'
-        self.MaxMemForTTY = 2048
         self.MaxMemForCmdHistory = 2048
         self.MaxMemForActionHistory = 2048
         self.MaxMemForChatHistory = 2048
