@@ -4,25 +4,22 @@ import myShellDrv
 from myGPT_Drv import GPT3_Drv, chat_Drv
 import time
 class theGPT3():
-    def __init__(self, apiKey, maxTokens):
+    def __init__(self, apiKey, name='CuteGPT'):
         # openai.api_key = apiKey
         # openai.api_type = "azure"
         # openai.api_base = "https://mygpt233.openai.azure.com/"
         # openai.api_version = "2022-12-01"
-        self.MaxMemForChatHistory = 512
-        self.MaxMemForTTY = 512
         self.maxTry = 3
-        self.gptdrv = GPT3_Drv(maxTokens=maxTokens, apiKey=apiKey)
+        self.gptdrv = GPT3_Drv(maxTokens=256, apiKey=apiKey)
         #self.gptdrv = chat_Drv(maxTokens=maxTokens, apiKey=apiKey)
-        self.shell = myShellDrv.myShell(maxChars=self.MaxMemForTTY)
-        self.maxTokens = maxTokens
-        self.Emotional = '...'
         self.chatHistory = ''
         self.actionHistory = ''
-        self.cmdHistory = ''
-        self.context2Introduction = 'This is a special context format. Line 0 is this context struct introduction, do not change that; Line 1 is your emotional; Line 2 is current terminal status; Line 3 is the chat history; Line 4 is your action history; Line 5 is your cmd typed history; Line 6 is users text input; Line 7 is your action; Line 8 is your cmd to the bash/cmd.exe; Line 9 and later is your text output. Please note that your cmd will be respond in the next talk so do not answer something random at this time (Told user you are working on it), and do not use sudo, do not delete files, and you should respond a full complete context strictly with this format.'
-        self.MaxMemForCmdHistory = 256
-        self.MaxMemForActionHistory = 4000 - maxTokens - len(self.context2Introduction) - self.MaxMemForChatHistory - self.MaxMemForTTY - self.MaxMemForCmdHistory - 128
+        self.emotionHistory = ''
+        self.context2Introduction = 'This is a special context format. Follow this format strictly. Line 0 is this context struct introduction, do not change that; Line 1 is the chat history, do not change that; Line 2 is the emotion history, do not change that; Line 3 is the body action history, do not change that; Line 4 is users text input, you cannot change that; Line 5 is your action, you can do anything; Line 6 is your text output, you can say anything. Please respond a full complete context strictly with this format.'
+        self.MaxMemForChatHistory = 512
+        self.MaxMemForActionHistory = 256
+        self.MaxMemForEmotionHistory = 256
+        self.name = name
 
     def shrink(self, x, type = 0):
         if (type == 0):
@@ -32,25 +29,25 @@ class theGPT3():
             if (len(x) > self.MaxMemForActionHistory):
                 x = x[len(x) - self.MaxMemForActionHistory:]
         elif (type == 2):
-            if (len(x) > self.MaxMemForCmdHistory):
-                x = x[len(x) - self.MaxMemForCmdHistory:]
+            if (len(x) > self.MaxMemForEmotionHistory):
+                x = x[len(x) - self.MaxMemForEmotionHistory:]
         return x
 
     def makeContext2(self, userTxtInput = 'Hello'):
         context2 = self.context2Introduction + '\n'
-        context2 += 'Emotional: ' + self.Emotional + '(change here to your realtime feeling)\n'
-        #context2 += 'TimeNow: ' + time.ctime() + '\n'
-        self.shell.getScreen()
-        context2 += 'TTY: ' +  self.shell.translateScreen() + '\n'
         context2 += 'ChatHistory: ' + self.chatHistory + '\n'
+        context2 += 'EmotionHistory: ' + self.emotionHistory + '\n'
         context2 += 'BodyActHistory: ' + self.actionHistory + '\n'
-        context2 += 'CmdHistory: ' + self.cmdHistory + '\n'
         context2 += 'UserTxtInput: ' + userTxtInput + '\n'
+        context2 += 'Emotional: ...Fill out here.\n'
         context2 += 'BodyAct: ...Fill out here.\n'
-        context2 += 'CMDAction: ...Fill out here.\n'
         context2 += 'TxtOutput: ...Fill out here.\n'
         context2 += '-------------------------------\n'
         context2 += self.context2Introduction + '\n'
+        context2 += 'ChatHistory: ' + self.chatHistory + '\n'
+        context2 += 'EmotionHistory: ' + self.emotionHistory + '\n'
+        context2 += 'BodyActHistory: ' + self.actionHistory + '\n'
+        context2 += 'UserTxtInput: ' + userTxtInput + '\n'
         return context2
 
     def interactive(self, x):
@@ -64,22 +61,19 @@ class theGPT3():
             try:
                 res = self.gptdrv.forward(x).split('\n')
                 print(res)
-                self.Emotional = res[0].split(': ')[1]
-                self.actionHistory += time.ctime().replace(' ', '_') + ' ' + res[6].split(':')[1][1:] + ';'
-                self.actionHistory = self.shrink(self.actionHistory, 1)
-                try:
-                    CMDOut = res[7].split(': ')[1]
-                    self.shell.sendCmd(CMDOut)
-                except:
-                    CMDOut = ''
-                self.cmdHistory += CMDOut + ';'
-                self.cmdHistory = self.shrink(self.cmdHistory, 2)
-                self.chatHistory += 'Bot: ' + res[8].split(': ')[1]
-                if (len(res) > 9):
-                    for i in range(9, len(res)):
-                        self.chatHistory += '<br>' + res[i]
-                self.chatHistory += ' '
-                return res
+                Emotional = res[0].split(': ')[1]
+                Action = res[1].split(': ')[1]
+                TxtOutput = '\n'.join(res[2:])
+                TxtOutput = TxtOutput.split(': ')[1]
+                self.emotionHistory += Emotional + ';'
+                self.shrink(self.emotionHistory, 2)
+                self.actionHistory += time.ctime().replace(' ', '_') + ' ' + Action + ';'
+                self.shrink(self.actionHistory, 1)
+                if '\n' in TxtOutput:
+                    self.chatHistory += self.name + ': ' + TxtOutput.replace('\n', '<br>')
+                else:
+                    self.chatHistory += self.name + ': ' + TxtOutput + ' '
+                return Emotional, Action, TxtOutput
             except:
                 print('Emmmm GPT give a bad response, try again...')
                 i += 1
@@ -92,8 +86,3 @@ if __name__ == '__main__':
     while True:
         res = myGPT3.interactive(input('Type something: '))
         #print(res)
-        print(myGPT3.shell.ptyData.decode('utf-8'))
-        # print('Line 0:' + res[0])
-        # print('Line 1:' + res[1])
-        # print('Line 2:' + res[2])
-        # print('Line 3:' + res[3])

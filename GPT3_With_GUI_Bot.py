@@ -1,4 +1,4 @@
-import GPT3_Core
+import GPT3_Core_old2
 import os
 import cv2
 import azure.cognitiveservices.speech as speechsdk
@@ -9,7 +9,7 @@ speech_config.speech_synthesis_voice_name = "ja-JP-MayuNeural"
 # use the default speaker as audio output.
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
-myGPT3 = GPT3_Core.theGPT3(open('azgpt3.key','r').readline(), 2048)
+myGPT3 = GPT3_Core_old2.theGPT3(open('azgpt3.key','r').readline(), 2048)
 #myGPT3.ask('Hello World!')
 
 def show_simliar_figure(description, txtoutput):
