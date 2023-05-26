@@ -10,7 +10,7 @@ class theGPT3():
         # openai.api_base = "https://mygpt233.openai.azure.com/"
         # openai.api_version = "2022-12-01"
         self.maxTry = 3
-        self.gptdrv = GPT3_Drv(maxTokens=256, apiKey=apiKey)
+        self.gptdrv = GPT3_Drv(apiKey=apiKey)
         #self.gptdrv = chat_Drv(maxTokens=maxTokens, apiKey=apiKey)
         self.chatHistory = ''
         self.actionHistory = ''
@@ -74,14 +74,14 @@ class theGPT3():
                 else:
                     self.chatHistory += self.name + ': ' + TxtOutput + ' '
                 return Emotional, Action, TxtOutput
-            except:
-                print('Emmmm GPT give a bad response, try again...')
+            except Exception as e:
+                print('Emmmm GPT give a bad response ' + str(e))
                 i += 1
                 continue
         return None
 
 if __name__ == '__main__':
-    myGPT3 = theGPT3(open('azgpt3.key','r').readline(), 1536)
+    myGPT3 = theGPT3(open('azgpt3.key','r').readline())
     #myGPT3.ask('Hello World!')
     while True:
         res = myGPT3.interactive(input('Type something: '))

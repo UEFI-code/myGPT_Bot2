@@ -1,4 +1,4 @@
-import GPT3_Core_old2
+import GPT3_Core
 import os
 import cv2
 import azure.cognitiveservices.speech as speechsdk
@@ -9,7 +9,7 @@ speech_config.speech_synthesis_voice_name = "ja-JP-MayuNeural"
 # use the default speaker as audio output.
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
-myGPT3 = GPT3_Core_old2.theGPT3(open('azgpt3.key','r').readline(), 2048)
+myGPT3 = GPT3_Core.theGPT3(open('azgpt3.key','r').readline())
 #myGPT3.ask('Hello World!')
 
 def show_simliar_figure(description, txtoutput):
@@ -36,13 +36,10 @@ def show_simliar_figure(description, txtoutput):
 while True:
     res = myGPT3.interactive(input('Type something: '))
     #print(res)
-    Emotional = res[0].split(': ')[1]
-    Action = res[6].split(': ')[1]
-    TxtOutput = res[8].split(': ')[1]
-    if(len(res) > 9):
-        for i in range(9, len(res)):
-            TxtOutput += '\n' + res[i]
-    elif '<br>' in TxtOutput:
+    Emotional = res[0]
+    Action = res[1]
+    TxtOutput = res[2]
+    if '<br>' in TxtOutput:
         TxtOutput = TxtOutput.replace('<br>', '\n')
     DesiredFigFile = Emotional.split(' ')[0] + '_' + Action.split(' ')[0] + '.png'
     print('Emotional: ' + Emotional)
