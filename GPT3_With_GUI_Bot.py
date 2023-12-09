@@ -9,8 +9,8 @@ speech_config.speech_synthesis_voice_name = "ja-JP-MayuNeural"
 # use the default speaker as audio output.
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
-myGPT3 = GPT3_Core.theGPT3(open('azgpt3.key','r').readline())
-#myGPT3.ask('Hello World!')
+jsonparam = json.load(open('gpt4token.key', 'r'))
+myGPT3 = GPT3_Core.theGPT3(apiKey=jsonparam['key'], endpoint=jsonparam['endpoint'])
 
 def show_simliar_figure(description, txtoutput):
     allfigures = os.listdir('figs')
