@@ -86,8 +86,10 @@ class theGPT3():
         return None
 
 if __name__ == '__main__':
-    myGPT3 = theGPT3(open('azgpt3.key','r').readline())
+    import json
+    jsonparam = json.load(open('gpt4token.key', 'r'))
+    myGPT = theGPT3(apiKey=jsonparam['key'], endpoint=jsonparam['endpoint'])
     #myGPT3.ask('Hello World!')
     while True:
-        res = myGPT3.interactive(input('Type something: '))
-        #print(res)
+        res = myGPT.interactive(input('Type something: '))
+        print(res)
