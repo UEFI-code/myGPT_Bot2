@@ -1,14 +1,21 @@
-# This is a funny bot based on GPT-3.
+# This is a funny bot based on GPT-3/4.
 
 ## Prepare to use
 
-Create a gpt3.key, azspeech.key with your token.
+Create a gpt4token.key, azspeech.key
 
-If you are using macOS, maybe it can say something.
+Create a gpt3token.key or gpt4token.key in json format like this
+
+```
+{
+  "key": "xxxxxx",
+  "endpoint": "https://xxxx.openai.azure.com/openai/deployments/xxxx/completions?api-version=2022-12-01"
+}
+```
 
 ## GPT3_With_GUI_Bot
 
-This is a virtual bot driven by GPT3, having motion and can execute shell cmd.
+This is a virtual bot driven by GPT3/4, having motion and can drive animate.
 
 ## GPT3_With_CV:
 
