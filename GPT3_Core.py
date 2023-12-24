@@ -1,6 +1,5 @@
 import os
-#import openai
-import myShellDrv
+
 from myGPT_Drv import GPT3_Drv, chat_Drv, GPT4_Drv
 import time
 class theGPT3():
@@ -12,13 +11,13 @@ class theGPT3():
         self.chatHistory = ''
         self.actionHistory = ''
         self.emotionHistory = ''
-        self.context2Introduction = 'This is a special context format. Follow this format strictly. Line 0 is this context struct introduction, do not change that; Line 1 is the chat history, do not change that; Line 2 is the emotion history, do not change that; Line 3 is the body action history, do not change that; Line 4 is your action, you can do anything; Line 5 is your text output, you can say anything. Please respond a full complete context strictly with this format.'
+        self.context2Introduction = f'Your name is {name}. This is a special context format. Follow this format strictly. Line 0 is this context struct introduction, do not change that; Line 1 is the chat history, do not change that; Line 2 is the emotion history, do not change that; Line 3 is the body action history, do not change that; Line 4 is your action, you can do anything; Line 5 is your text output, you can say anything. Please respond a full complete context strictly with this format.'
         # self.MaxMemForChatHistory = 512
         # self.MaxMemForActionHistory = 128
         # self.MaxMemForEmotionHistory = 128
         self.MaxCountForChatHistory = 10
         self.MaxCountForActionHistory = 10
-        self.MaxCountForChatHistory = 10
+        self.MaxCountForEmotionHistory = 10
         self.name = name
 
     def shrink(self, x, type = 0):
@@ -33,11 +32,11 @@ class theGPT3():
             x = ';'.join(x)
         elif type == 2:
             x = x.split(';')
-            x = x[-self.MaxCountForChatHistory:]
+            x = x[-self.MaxCountForEmotionHistory:]
             x = ';'.join(x)
         return x
 
-    def makeContext2(self, userTxtInput = 'Hello'):
+    def makeContext2(self):
         context2 = self.context2Introduction + '\n'
         context2 += 'ChatHistory: ' + self.chatHistory + '\n'
         context2 += 'EmotionHistory: ' + self.emotionHistory + '\n'
@@ -54,11 +53,11 @@ class theGPT3():
         #context2 += 'UserTxtInput: ' + userTxtInput + '\n'
         return context2
 
-    def interactive(self, x):
+    def interactive(self, x, username = 'User'):
         x = x.replace('\n', ' ')
-        self.chatHistory += 'User: ' + x + '. '
+        self.chatHistory += username + ': ' + x + '. '
         self.chatHistory = self.shrink(self.chatHistory, 0)
-        x = self.makeContext2(userTxtInput=x)
+        x = self.makeContext2()
         #print(x)
         i = 0
         while(i < self.maxTry):
@@ -74,20 +73,24 @@ class theGPT3():
                 self.actionHistory += time.ctime().replace(' ', '_') + ' ' + Action + ';'
                 self.shrink(self.actionHistory, 1)
                 if '\n' in TxtOutput:
-                    self.chatHistory += self.name + ': ' + TxtOutput.replace('\n', '<br>')
+                    self.chatHistory += self.name + ': ' + TxtOutput.replace('\n', '<br>') + '. '
                 else:
-                    self.chatHistory += self.name + ': ' + TxtOutput + ' '
+                    self.chatHistory += self.name + ': ' + TxtOutput + '. '
                 return Emotional, Action, TxtOutput
             except Exception as e:
-                print('Emmmm GPT give a bad response ' + str(e))
+                print('Emmmm GPT give a bad response ' + str(e) + str(res))
                 i += 1
                 time.sleep(5)
                 continue
         return None
+    
+    def just_add_chat_history(self, x, username = 'User'):
+        x = x.replace('\n', ' ')
+        self.chatHistory += username + ': ' + x + '. '
 
 if __name__ == '__main__':
     import json
-    jsonparam = json.load(open('gpt4token.key', 'r'))
+    jsonparam = json.load(open('gpt3token.key', 'r'))
     myGPT = theGPT3(apiKey=jsonparam['key'], endpoint=jsonparam['endpoint'])
     #myGPT3.ask('Hello World!')
     while True:
