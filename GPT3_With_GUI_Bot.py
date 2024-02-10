@@ -2,6 +2,7 @@ import GPT3_Core
 import os
 import cv2
 import azure.cognitiveservices.speech as speechsdk
+import json
 
 speech_config = speechsdk.SpeechConfig(subscription=open('azspeech.key','r').readline(), region='japaneast')
 # Note: the voice setting will not overwrite the voice element in input SSML.
@@ -9,7 +10,7 @@ speech_config.speech_synthesis_voice_name = "ja-JP-MayuNeural"
 # use the default speaker as audio output.
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
-jsonparam = json.load(open('gpt4token.key', 'r'))
+jsonparam = json.load(open('gpt3token.key', 'r'))
 myGPT3 = GPT3_Core.theGPT3(apiKey=jsonparam['key'], endpoint=jsonparam['endpoint'])
 
 def show_simliar_figure(description, txtoutput):
