@@ -28,7 +28,10 @@ class GPT3_Drv:
         if (self.body['max_tokens'] < 0):
             raise Exception('The input text is too long.')
         response = requests.post(self.endpoint, headers=self.header, data=json.dumps(self.body))
-        return response.json()['choices'][0]['text']
+        try:
+            return response.json()['choices'][0]['text']
+        except:
+            return 'Net Error ' + str(response.json())
 
 class chat_Drv:
     def __init__(self, endpoint="https://mygpt233.openai.azure.com/openai/deployments/myGPTChat_3_5/chat/completions?api-version=2023-03-15-preview", apiKey="233333", maxToken=4096):
@@ -55,7 +58,10 @@ class chat_Drv:
         self.body['messages'] = self.messages + [{"role":"user","content":x}]
         self.body['max_tokens'] = self.maxReadToken - len(x)
         response = requests.post(self.endpoint, headers=self.header, data=json.dumps(self.body))
-        return response.json()['choices'][0]['message']['content']
+        try:
+            return response.json()['choices'][0]['message']['content']
+        except:
+            return 'Net Error ' + str(response.json())
 
 class GPT4_Drv:
     def __init__(self, endpoint="https://mygpt233.openai.azure.com/openai/deployments/myGPT4_32K/chat/completions?api-version=2023-03-15-preview", apiKey="233333", maxReadToken=8192, maxOutToken=4096):
