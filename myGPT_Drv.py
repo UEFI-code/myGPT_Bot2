@@ -20,14 +20,13 @@ class GPT3_Drv:
         }
         self.maxReadToken = 4000
         self.maxOutTokens = 4000
+        self.jsonEncoder = json.JSONEncoder()
     
     def forward(self, x = 'Hello World'):
         assert len(x) < self.maxReadToken
         self.body['prompt'] = x
         self.body['max_tokens'] = self.maxReadToken - len(x)
-        if (self.body['max_tokens'] < 0):
-            raise Exception('The input text is too long.')
-        response = requests.post(self.endpoint, headers=self.header, data=json.dumps(self.body))
+        response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
         try:
             return response.json()['choices'][0]['text']
         except:
@@ -40,7 +39,7 @@ class chat_Drv:
             "Content-Type": "application/json",
             "api-key": apiKey
         }
-        self.messages = [{"role":"system","content":"You are a kawaii girl."}]
+        self.messages = [{"role":"system","content":"You are a smart and kawaii girl."}]
         self.body = {
             "messages": None,
             "max_tokens": 256,
@@ -52,12 +51,13 @@ class chat_Drv:
         }
         self.maxReadToken = maxToken
         self.maxOutTokens = maxToken
+        self.jsonEncoder = json.JSONEncoder()
     
     def forward(self, x = 'Hello World'):
         assert len(x) < self.maxReadToken
         self.body['messages'] = self.messages + [{"role":"user","content":x}]
         self.body['max_tokens'] = self.maxReadToken - len(x)
-        response = requests.post(self.endpoint, headers=self.header, data=json.dumps(self.body))
+        response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
         try:
             return response.json()['choices'][0]['message']['content']
         except:
@@ -82,6 +82,7 @@ class GPT4_Drv:
         }
         self.maxReadToken = maxReadToken
         self.maxOutTokens = maxOutToken
+        self.jsonEncoder = json.JSONEncoder()
 
     def forward(self, x = 'Hello World'):
         assert len(x) < self.maxReadToken
@@ -89,7 +90,7 @@ class GPT4_Drv:
         self.body['max_tokens'] = self.maxReadToken - len(x) # This is the expected output length
         if (self.body['max_tokens'] > self.maxOutTokens):
             self.body['max_tokens'] = self.maxOutTokens
-        response = requests.post(self.endpoint, headers=self.header, data=json.dumps(self.body))
+        response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
         try:
             return response.json()['choices'][0]['message']['content']
         except:
