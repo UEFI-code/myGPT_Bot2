@@ -23,9 +23,9 @@ class GPT3_Drv:
         self.jsonEncoder = json.JSONEncoder()
     
     def forward(self, x = 'Hello World'):
-        assert len(x) < self.maxReadToken
+        assert len(x.encode()) < self.maxReadToken
         self.body['prompt'] = x
-        self.body['max_tokens'] = self.maxReadToken - len(x)
+        self.body['max_tokens'] = self.maxReadToken - len(x.encode())
         response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
         try:
             return response.json()['choices'][0]['text']
@@ -54,9 +54,9 @@ class chat_Drv:
         self.jsonEncoder = json.JSONEncoder()
     
     def forward(self, x = 'Hello World'):
-        assert len(x) < self.maxReadToken
+        assert len(x.encode()) < self.maxReadToken
         self.body['messages'] = self.messages + [{"role":"user","content":x}]
-        self.body['max_tokens'] = self.maxReadToken - len(x)
+        self.body['max_tokens'] = self.maxReadToken - len(x.encode())
         response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
         try:
             return response.json()['choices'][0]['message']['content']
@@ -85,9 +85,9 @@ class GPT4_Drv:
         self.jsonEncoder = json.JSONEncoder()
 
     def forward(self, x = 'Hello World'):
-        assert len(x) < self.maxReadToken
+        assert len(x.encode()) < self.maxReadToken
         self.body['messages'] = self.messages + [{"role":"user","content":x}]
-        self.body['max_tokens'] = self.maxReadToken - len(x) # This is the expected output length
+        self.body['max_tokens'] = self.maxReadToken - len(x.encode()) # This is the expected output length
         if (self.body['max_tokens'] > self.maxOutTokens):
             self.body['max_tokens'] = self.maxOutTokens
         response = requests.post(self.endpoint, headers=self.header, data=self.jsonEncoder.encode(self.body))
