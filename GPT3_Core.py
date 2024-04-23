@@ -16,7 +16,7 @@ class theGPT3():
     
     def stepShrinkWithMakeContext(self):
         x = self.makeContext2()
-        while(len(x) > self.gptdrv.maxReadToken - 100):
+        while(len(x.encode()) > self.gptdrv.maxReadToken - 100):
             self.chatHistory.split('. ')
             self.chatHistory = '. '.join(self.chatHistory[1:])
             self.emotionHistory.split(';')
