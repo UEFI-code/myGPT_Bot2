@@ -1,0 +1,12 @@
+cff-version: 1.0.0
+message: If you use this software, please cite it as below.
+title: myGPT_Bot2
+authors:
+  - family-names: myGPT_Bot2 Team
+url: https://github.com/UEFI-code/myGPT_Bot2
+preferred-citation:
+  type: opensource-software-toolkit
+  title: "myGPT_Bot2: An open-source project for demonstration how LLM intregrate with Speech or Vision and controlling GUI or interactive with System Shell"
+  authors:
+    - family-names: Zhang
+      given-names: Shizhuo
