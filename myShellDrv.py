@@ -39,14 +39,13 @@ class myShell():
     
     def translateScreen(self):
         translated = self.ansi_escape.sub('', self.ptyData.decode('utf-8')).replace('\r', '')
-        if(len(translated) > self.maxChars):
-            translated = translated[len(translated) - self.maxChars:]
+        translated = translated[-self.maxChars:]
         return translated.replace('\n', '<br>')
 
 if __name__ == '__main__':
     myShellObj = myShell()
     myShellObj.getScreen()
     print(myShellObj.ptyData.decode('utf-8'))
-    #myShellObj.sendCmd('ifconfig')
+    myShellObj.sendCmd('ifconfig')
     myShellObj.getScreen()
     print(myShellObj.translateScreen())
